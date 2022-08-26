@@ -6,6 +6,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SpecialistController;
 use App\Http\Controllers\DokterController;
+use App\Http\Controllers\AppointmentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,4 +35,12 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
     Route::get('delete-specialist/{id}', [SpecialistController::class, 'deleteSpecialist']);
 
     Route::get('all-dokter', [DokterController::class, 'index']);
+    Route::get('delete-dokter/{id}', [DokterController::class, 'deleteDokter']);
+    Route::get('detail-dokter/{id}', [DokterController::class, 'detailDokter']);
+    Route::post('add-dokter', [DokterController::class, 'addDokter']);
+    Route::post('edit-dokter/{id}', [DokterController::class, 'editDokter']);
+
+    Route::post('add-appointment', [AppointmentController::class, 'addAppointment']);
+    Route::get('detail-appointment/{id}', [AppointmentController::class, 'detailAppointment']);
+    Route::get('all-appointment', [AppointmentController::class, 'allAppointment']);
 });

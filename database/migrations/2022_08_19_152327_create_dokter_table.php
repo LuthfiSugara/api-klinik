@@ -19,9 +19,13 @@ class CreateDokterTable extends Migration
             $table->string('email');
             $table->string('password');
             $table->integer('id_specialist');
+            $table->integer('id_level');
+            $table->integer('id_gender');
             $table->date('tanggal_lahir');
             $table->date('mulai_praktek');
             $table->text('keterangan');
+            $table->string('foto');
+            $table->integer('biaya');
             $table->timestamps();
             $table->softDeletes();
         });

@@ -27,9 +27,9 @@ class UserController extends Controller
 
             $foto = $request->foto;
             if($chooseGender->name === "Laki-laki"){
-                $file_name = 'assets/images/profile/male.jpg';
+                $file_name = '/assets/images/profile/male.jpg';
             }else{
-                $file_name = 'assets/images/profile/female.jpg';
+                $file_name = '/assets/images/profile/female.jpg';
             }
 
             if ($foto) {
@@ -37,17 +37,30 @@ class UserController extends Controller
                 $foto->move(public_path('/assets/images/profile/'), $file_name);
             }
 
-            $user = User::create([
-                'nama' => $request->nama,
-                'email' => $request->email,
-                'password' => bcrypt($request->password),
-                'tanggal_lahir' => $request->tanggal_lahir,
-                'id_gender' => $request->id_gender,
-                'no_hp' => $request-> no_hp,
-                'berat_badan' => $request->berat_badan,
-                'tinggi_badan' => $request->tinggi_badan,
-                'foto' => $file_name,
-            ]);
+            // $user = User::create([
+            //     'nama' => $request->nama,
+            //     'email' => $request->email,
+            //     'password' => bcrypt($request->password),
+            //     'tanggal_lahir' => $request->tanggal_lahir,
+            //     'id_gender' => $request->id_gender,
+            //     'no_hp' => $request-> no_hp,
+            //     'berat_badan' => $request->berat_badan,
+            //     'tinggi_badan' => $request->tinggi_badan,
+            //     'foto' => $file_name,
+            // ]);
+
+            $user = new User;
+            $user->nama = $request->nama;
+            $user->email = $request->email;
+            $user->password = bcrypt($request->password);
+            $user->tanggal_lahir = $request->tanggal_lahir;
+            $user->id_gender = $request->id_gender;
+            $user->no_hp = $request-> no_hp;
+            $user->berat_badan = $request->berat_badan;
+            $user->tinggi_badan = $request->tinggi_badan;
+            $user->foto = $file_name;
+            $user->id_level = $request->id_level;
+            $user->save();
 
             // $validation = ValidationUser::create([
             //     'id_user' => $user->id,

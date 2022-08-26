@@ -19,7 +19,8 @@ class CreateUsersTable extends Migration
             $table->string('email')->unique();
             $table->string('password');
             $table->date('tanggal_lahir');
-            $table->string('id_gender');
+            $table->integer('id_gender');
+            $table->integer('id_level');
             $table->string('no_hp');
             $table->string('berat_badan');
             $table->string('tinggi_badan');

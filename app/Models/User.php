@@ -25,6 +25,7 @@ class User extends Authenticatable
         'password',
         'tanggal_lahir',
         'id_gender',
+        'id_level',
         'no_hp',
         'berat_badan',
         'tinggi_badan',
