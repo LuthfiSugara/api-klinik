@@ -3,32 +3,34 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\models\Dokter;
+use App\models\User;
+use App\models\DetailDokter;
 use Illuminate\Support\Facades\Validator;
 
 class DokterController extends Controller
 {
     public function index(){
-        $dokter = Dokter::with([
+        $dokter = User::with([
             'gender' => function($q){
                 $q->select('id', 'name');
             },
-            'specialist' => function($q){
-                $q->select('id', 'name');
+            'detail' => function($q){
+                $q->with('specialist:id,name')->select('id', 'id_dokter', 'id_specialist', 'mulai_praktek', 'keterangan', 'biaya');
             },
         ])
-        ->orderBy('nama', 'asc')
+        ->where('id_level', 3)
+        ->orderBy('updated_at', 'desc')
         ->get();
         return ['status' => "success", 'data' => $dokter, 'message' => 'Success'];
     }
 
     public function detailDokter($id){
-        $dokter = Dokter::with([
+        $dokter = User::with([
             'gender' => function($q){
                 $q->select('id', 'name');
             },
-            'specialist' => function($q){
-                $q->select('id', 'name');
+            'detail' => function($q){
+                $q->with('specialist:id,name')->select('id', 'id_dokter', 'id_specialist', 'mulai_praktek', 'keterangan', 'biaya');
             },
         ])
         ->where('id', $id)
@@ -49,9 +51,9 @@ class DokterController extends Controller
 
             $foto = $request->foto;
             if($request->id_gender == 1){
-                $file_name = '/assets/images/profile/male.jpg';
+                $file_name = '/assets/images/default/doctor-male.jpg';
             }else{
-                $file_name = '/assets/images/profile/female.jpg';
+                $file_name = '/assets/images/default/doctor-female.jpg';
             }
 
             if ($foto) {
@@ -82,7 +84,7 @@ class DokterController extends Controller
     }
 
     public function editDokter(Request $request, $id){
-        $dokter = Dokter::where('id', $id)->first();
+        $dokter = User::where('id', $id)->first();
         $foto = $request->foto;
         $file_name = $dokter->foto;
 
@@ -95,14 +97,18 @@ class DokterController extends Controller
         if($request->password){
             $dokter->password = bcrypt($request->password);
         }
-        $dokter->id_specialist = $request->id_specialist;
+
         $dokter->id_gender = $request->id_gender;
         $dokter->tanggal_lahir = $request->tanggal_lahir;
-        $dokter->mulai_praktek = $request->mulai_praktek;
-        $dokter->keterangan = $request->keterangan;
         $dokter->foto = $file_name;
-        $dokter->biaya = $request->biaya;
         $dokter->save();
+
+        $detail = DetailDokter::where('id_dokter', $id)->first();
+        $detail->id_specialist = $request->id_specialist;
+        $detail->mulai_praktek = $request->mulai_praktek;
+        $detail->keterangan = $request->keterangan;
+        $detail->biaya = $request->biaya;
+        $detail->save();
 
         if($dokter){
             return ['status' => "success", 'message' => 'Success'];

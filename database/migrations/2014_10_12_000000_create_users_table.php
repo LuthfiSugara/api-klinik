@@ -22,8 +22,8 @@ class CreateUsersTable extends Migration
             $table->integer('id_gender');
             $table->integer('id_level');
             $table->string('no_hp');
-            $table->string('berat_badan');
-            $table->string('tinggi_badan');
+            $table->string('berat_badan')->nullable();
+            $table->string('tinggi_badan')->nullable();
             $table->string('foto')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             // $table->rememberToken();

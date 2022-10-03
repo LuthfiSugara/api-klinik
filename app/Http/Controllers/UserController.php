@@ -10,6 +10,8 @@ use App\models\ValidationUser;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use App\models\Gender;
+use App\models\Dokter;
+use App\models\DetailDokter;
 
 class UserController extends Controller
 {
@@ -23,11 +25,14 @@ class UserController extends Controller
         if($validator->fails()){
             return ['status' => "fail", 'message' => 'Email sudah terdaftar'];
         }else{
-            $chooseGender = Gender::where('id', $request->id_gender)->first();
 
             $foto = $request->foto;
-            if($chooseGender->name === "Laki-laki"){
-                $file_name = '/assets/images/profile/male.jpg';
+            if($request->id_gender == 1 && $request->id_level == 3){
+                $file_name = '/assets/images/default/doctor-male.jpg';
+            }else if($request->id_gender == 2 && $request->id_level == 3){
+                $file_name = '/assets/images/default/doctor-female.jpg';
+            }else if($request->id_gender == 1){
+                $file_name = '/assets/images/default/doctor-male.jpg';
             }else{
                 $file_name = '/assets/images/profile/female.jpg';
             }
@@ -36,18 +41,6 @@ class UserController extends Controller
                 $file_name = '/assets/images/profile/' . $request->nama . time() . '.' . $foto->getClientOriginalExtension();
                 $foto->move(public_path('/assets/images/profile/'), $file_name);
             }
-
-            // $user = User::create([
-            //     'nama' => $request->nama,
-            //     'email' => $request->email,
-            //     'password' => bcrypt($request->password),
-            //     'tanggal_lahir' => $request->tanggal_lahir,
-            //     'id_gender' => $request->id_gender,
-            //     'no_hp' => $request-> no_hp,
-            //     'berat_badan' => $request->berat_badan,
-            //     'tinggi_badan' => $request->tinggi_badan,
-            //     'foto' => $file_name,
-            // ]);
 
             $user = new User;
             $user->nama = $request->nama;
@@ -61,6 +54,16 @@ class UserController extends Controller
             $user->foto = $file_name;
             $user->id_level = $request->id_level;
             $user->save();
+
+            if($request->id_level == 3){
+                $detail = new DetailDokter;
+                $detail->id_dokter = $user->id;
+                $detail->id_specialist = $request->id_specialist;
+                $detail->mulai_praktek = $request->mulai_praktek;
+                $detail->keterangan = $request->keterangan;
+                $detail->biaya = $request->biaya;
+                $detail->save();
+            }
 
             // $validation = ValidationUser::create([
             //     'id_user' => $user->id,
@@ -85,12 +88,6 @@ class UserController extends Controller
     public function updateProfile(Request $request){
         $id = $request->user()->id;
         $user = User::where('id', $id)->first();
-        $validateUser = User::whereNotIn('email', [$user->email])->get();
-        foreach($validateUser as $value){
-            if($value->email === $request->email){
-                return ['status' => "fail", 'message' => 'Email sudah digunakan'];
-            }
-        }
 
         $foto = $request->foto;
         $file_name = $user->foto;
@@ -101,7 +98,6 @@ class UserController extends Controller
         }
 
         $user->nama = $request->nama;
-        $user->email = $request->email;
         if($request->password){
             $user->password = bcrypt($request->password);
         }
@@ -112,6 +108,15 @@ class UserController extends Controller
         $user->tinggi_badan = $request->tinggi_badan;
         $user->foto = $file_name;
         $user->save();
+
+        if($user->id_level == 3){
+            $detail = DetailDokter::where('id_dokter', $user->id)->first();
+            $detail->id_specialist = $request->id_specialist;
+            $detail->mulai_praktek = $request->mulai_praktek;
+            $detail->keterangan = $request->keterangan;
+            $detail->biaya = $request->biaya;
+            $detail->save();
+        }
 
         // if($request->password){
         //     // return "Password";
@@ -152,6 +157,9 @@ class UserController extends Controller
 
     public function login(Request $request){
         $user = User::where('email', $request->email)->first();
+        if(!$user){
+            $user = Dokter::where('email', $request->email)->first();
+        }
 
         if(!$user){
             return ['status' => "fail", 'message' => 'User tidak terdaftar'];

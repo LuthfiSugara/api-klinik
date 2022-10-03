@@ -7,6 +7,7 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SpecialistController;
 use App\Http\Controllers\DokterController;
 use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\ConsultationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,4 +44,11 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
     Route::post('add-appointment', [AppointmentController::class, 'addAppointment']);
     Route::get('detail-appointment/{id}', [AppointmentController::class, 'detailAppointment']);
     Route::get('all-appointment', [AppointmentController::class, 'allAppointment']);
+    Route::get('all-user-appointment', [AppointmentController::class, 'allUserAppointment']);
+    Route::get('update-status-appointment/{id}/{status}', [AppointmentController::class, 'updateStatusAppointment']);
+
+    Route::post('add-consultation', [ConsultationController::class, 'addConsultation']);
+    Route::post('add-detail-consultation', [ConsultationController::class, 'addDetailConsultation']);
+    Route::get('get-consultation', [ConsultationController::class, 'getConsultation']);
+    Route::get('get-detail-consultation/{id}', [ConsultationController::class, 'getDetailConsultation']);
 });

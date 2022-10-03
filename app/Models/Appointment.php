@@ -22,21 +22,25 @@ class Appointment extends Model
         'biaya',
         'tanggal_berkunjung',
         'diagnosa',
+        'status',
+        'ispay',
     ];
 
     public function dokter(){
-        return $this->belongsTo(Dokter::class, 'id_dokter', 'id');
+        return $this->belongsTo(User::class, 'id_dokter', 'id');
     }
 
     public function user(){
         return $this->belongsTo(User::class, 'id_user', 'id');
     }
 
+    public function status(){
+        return $this->belongsTo(Status::class, 'status', 'id');
+    }
+
     public function getTanggalBerkunjungAttribute($value){
         $date = Carbon::createFromFormat('Y-m-d H:i:s', $value, 'Asia/Jakarta');
         $date->setTimezone('UTC');
         return $date;
-        // return Carbon::parse($value)->format('Y-m-d h:i:s a');
-        // return Carbon::parse($value, 'Y-m-d HH:mm:ss')->format('M d Y, h:m a');
     }
 }

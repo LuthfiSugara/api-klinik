@@ -4,28 +4,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Carbon\Carbon;
 
-class Dokter extends Model
+class DetailDokter extends Model
 {
     use HasFactory;
-    use SoftDeletes;
-
-    protected $table = 'dokter';
+    protected $table = 'detail_dokter';
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'nama',
-        'email',
-        'password',
+        'id_dokter',
         'id_specialist',
-        'id_level',
-        'id_gender',
-        'tanggal_lahir',
         'mulai_praktek',
         'keterangan',
-        'foto',
         'biaya',
     ];
 
@@ -35,14 +26,6 @@ class Dokter extends Model
 
     public function specialist(){
         return $this->belongsTo(Specialist::class, 'id_specialist', 'id');
-    }
-
-    public function gender(){
-        return $this->belongsTo(Gender::class, 'id_gender', 'id');
-    }
-
-    public function getTanggalLahirAttribute($value){
-        return Carbon::parse($value)->format('Y/m/d');
     }
 
     public function getLamaKerjaAttribute(){

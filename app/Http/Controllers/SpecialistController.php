@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\models\Specialist;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class SpecialistController extends Controller
 {
@@ -15,7 +16,10 @@ class SpecialistController extends Controller
 
     public function addSpecialist(Request $request){
 
-        $specialist = Specialist::create(['name' => $request->name]);
+        $specialist = Specialist::create([
+            'name' => $request->name,
+            'description' => $request->description,
+        ]);
 
         if($specialist){
             return ['status' => "success", 'message' => 'Success'];
@@ -26,16 +30,20 @@ class SpecialistController extends Controller
 
     public function editSpecialist(Request $request, $id){
 
-        $validator = Validator::make(['name' => $request->name],
+        $validator = Validator::make($request->all(),
             [
-                'name' => ['unique:specialist']
+                'name' => [Rule::unique('specialist')->ignore($id)]
             ]
         );
 
         if($validator->fails()){
             return ['status' => "fail", 'message' => 'Specialist sudah ada'];
         }else{
-            $specialist = Specialist::create(['name' => $request->name]);
+            $specialist = Specialist::where('id', $id)
+            ->update([
+                'name' => $request->name,
+                'description' => $request->description
+            ]);
 
             if($specialist){
                 return ['status' => "success", 'message' => 'Success'];
