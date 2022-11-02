@@ -16,8 +16,6 @@ use App\models\DetailDokter;
 class UserController extends Controller
 {
     public function register(Request $request){
-
-        // return $request->all();
         $validator = Validator::make(['email' => $request->email],
             [
                 'email' => ['unique:users']
