@@ -8,6 +8,7 @@ use App\Http\Controllers\SpecialistController;
 use App\Http\Controllers\DokterController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\ConsultationController;
+use App\Http\Controllers\PatientController;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,6 +41,9 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
     Route::get('detail-dokter/{id}', [DokterController::class, 'detailDokter']);
     Route::post('add-dokter', [DokterController::class, 'addDokter']);
     Route::post('edit-dokter/{id}', [DokterController::class, 'editDokter']);
+
+    Route::get('all-patient', [PatientController::class, 'index']);
+    Route::get('detail-patient/{id}', [PatientController::class, 'detailPatient']);
 
     Route::post('add-appointment', [AppointmentController::class, 'addAppointment']);
     Route::get('detail-appointment/{id}', [AppointmentController::class, 'detailAppointment']);
