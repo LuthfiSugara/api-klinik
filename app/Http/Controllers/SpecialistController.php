@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\models\Specialist;
+use App\Models\Specialist;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 

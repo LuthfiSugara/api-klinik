@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\models\Consultation;
-use App\models\DetailConsultation;
+use App\Models\Consultation;
+use App\Models\DetailConsultation;
 
 class ConsultationController extends Controller
 {

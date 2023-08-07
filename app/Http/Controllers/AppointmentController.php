@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\models\Appointment;
-use App\models\User;
+use App\Models\Appointment;
+use App\Models\User;
 use Carbon\Carbon;
 
 class AppointmentController extends Controller
