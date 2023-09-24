@@ -18,6 +18,7 @@ class CreateConsultationTable extends Migration
             $table->string('consultation');
             $table->integer('id_dokter');
             $table->integer('id_user');
+            $table->boolean('has_read')->default(false);
             $table->timestamps();
             $table->softDeletes();
         });

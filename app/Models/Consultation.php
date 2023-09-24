@@ -18,6 +18,7 @@ class Consultation extends Model
         'consultation',
         'id_dokter',
         'id_user',
+        "has_read"
     ];
 
     protected $appends = [

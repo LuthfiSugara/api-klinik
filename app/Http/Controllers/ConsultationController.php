@@ -63,6 +63,10 @@ class ConsultationController extends Controller
     }
 
     public function getDetailConsultation(Request $request, $id){
+        $consultation = Consultation::where('id', $id)->first();
+        $consultation->has_read = true;
+        $consultation = $consultation->save();
+
         $detail = Consultation::with([
             'dokter' => function($q){
                 $q->select('id', 'nama', 'foto');

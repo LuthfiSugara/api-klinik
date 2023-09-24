@@ -18,22 +18,23 @@ class AppointmentController extends Controller
         ])
         ->where('id', $request->id_dokter)
         ->first();
-        $total = Appointment::whereDate('tanggal_berkunjung', '=', $request->tanggal_berkunjung )->get()->count();
 
-        $create = new Appointment;
-        $create->id_user = $request->id_user;
-        $create->id_dokter = $request->id_dokter;
-        $create->biaya = $dokter->detail->biaya;
-        $create->nomor_urut = $total + 1;
-        $create->status = 2;
-        $create->diagnosa = $request->diagnosa;
-        $create->tanggal_berkunjung = $waktu_berkunjung;
-        $create->save();
+        $total = Appointment::where('tanggal_berkunjung', '=', $waktu_berkunjung)->count();
+        
+        if($total <= 4){
+            $create = new Appointment;
+            $create->id_user = $request->id_user;
+            $create->id_dokter = $request->id_dokter;
+            $create->biaya = $dokter->detail->biaya;
+            $create->nomor_urut = $total + 1;
+            $create->status = 2;
+            $create->diagnosa = $request->diagnosa;
+            $create->tanggal_berkunjung = $waktu_berkunjung;
+            $create->save();
 
-        if($create){
             return ['status' => "success", 'message' => 'Success'];
         }else{
-            return ['status' => "fail", 'message' => 'Failed'];
+            return ['status' => "fail", 'message' => 'Antrian sudah penuh'];
         }
     }
 
