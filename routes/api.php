@@ -26,10 +26,13 @@ Route::post('login', [UserController::class, 'login']);
 Route::get('verification-email/{id_user}/{key}', [UserController::class, 'verificationUser']);
 Route::post('verification-result', [UserController::class, 'verificationResult']);
 Route::get('gender', [SettingController::class, 'gender']);
+Route::post('/reset-password', [UserController::class, 'resetPassword']);
 
 Route::group(['middleware' => ['auth:sanctum']], function() {
     Route::get('profile', [UserController::class, 'profile']);
     Route::post('update-profile', [UserController::class, 'updateProfile']);
+
+    Route::post('update-profile-user', [UserController::class, 'updateProfileUser']);
 
     Route::get('all-specialist', [SpecialistController::class, 'index']);
     Route::post('add-specialist', [SpecialistController::class, 'addSpecialist']);

@@ -12,6 +12,11 @@ use Carbon\Carbon;
 use App\Models\Gender;
 use App\Models\Dokter;
 use App\Models\DetailDokter;
+use Illuminate\Support\Facades\DB;
+use Ramsey\Uuid\Uuid;
+use App\Models\ResetPassword;
+// use App\Mail\ResetPasswordMail;
+use Illuminate\Support\Facades\Mail;
 
 class UserController extends Controller
 {
@@ -209,5 +214,82 @@ class UserController extends Controller
 
     public function verificationResult(){
         return view('verification-result');
+    }
+
+    public function resetPassword(Request $request){
+        DB::beginTransaction();
+        try{
+            $user = User::where('email', $request->email)->first();
+
+            if(!$user){
+                return response()->json([
+                    'status' => 'fail',
+                    'message' => 'Email ' . $request->email . ' Tidak ditemukan!'
+                ], 404);
+            }
+
+            $reset = new ResetPassword;
+            $reset->email = $request->email;
+            $reset->new_password = bcrypt($request->password);
+            $reset->token = Uuid::uuid4();
+            $reset->created_at = round(microtime(true));
+            $reset->save();
+
+            if($reset){
+                $details = [
+                    'token' => $reset->token,
+                    'name' => $user->name
+                ];
+                
+                \Mail::to($request->email)->send(new \App\Mail\ResetPassword($details));
+                
+                DB::commit();
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Silahkan cek email ' . $reset->email
+                ], 200);
+            }
+
+        }catch(Exception $e){
+            DB::rollback();
+            return response()->json([
+                'status' => 'fail',
+                'message' => $e->getMessage()
+            ], 403);
+        }
+    }
+
+    public function confirmResetPassword(Request $request, $token){
+        $reset = ResetPassword::where([
+            'token' => $token,
+            'is_used' => false,
+        ])->orderBy('created_at', 'desc')
+        ->first();
+        
+        $title = 'Kode Salah';
+        $subTitle = 'Untuk mengubah password bisa menggunakan form reset password pada aplikasi <strong>Klinik Yazid Pratama.</strong> Jika ada kendala silahkan hubungi admin untuk detail lebih lanjut.';
+
+        if($reset){
+            if(($reset->created_at + 86400) >= round(microtime(true))) {
+                ResetPassword::where([
+                    'token' => $token,
+                    'is_used' => false,
+                ])
+                ->update([
+                    'is_used' => true
+                ]);
+
+                $user = User::where('email', $reset->email)->first();
+                $user->password = $reset->new_password;
+                $user->save();
+                
+                $title = 'Password berhasil diubah';
+                $subTitle = 'Silahkan gunakan password baru anda. Jika ada kendala silahkan hubungi admin untuk detail lebih lanjut.';
+            }else{
+                $title = 'Kode Expired';
+            }
+        }
+
+        return view('confirm-reset-password.index', compact('title', 'subTitle'));
     }
 }
