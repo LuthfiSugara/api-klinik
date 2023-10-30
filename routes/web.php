@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,3 +20,4 @@ Route::get('/', function () {
 });
 
 Route::get('/print', [AppointmentController::class, 'printPayment']);
+Route::get('/confirm-reset-password/{token}', [UserController::class, 'confirmResetPassword']);
